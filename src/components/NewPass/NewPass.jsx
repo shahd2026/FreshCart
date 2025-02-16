@@ -1,16 +1,15 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 // import style from"./NewPass.modules.C"
 import { useFormik } from "formik";
 import values from "./../../../node_modules/lodash-es/values";
 import * as yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
-import Login from './../Login/Login';
+import { Link } from "react-router-dom";
+import Login from "./../Login/Login";
 import { UserContext } from "../../Context/UserContext";
-import { useContext } from 'react';
 
 const NewPass = () => {
   let { LoginToken, setLoginToken } = useContext(UserContext);
@@ -55,6 +54,10 @@ const NewPass = () => {
 
   let MyYup = yup.object().shape({
     email: yup.string().email("Invalid email").required("Email is required"),
+    newPassword: yup
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .required("New password is required"),
   });
 
   let formik = useFormik({
@@ -69,7 +72,7 @@ const NewPass = () => {
   return (
     <>
       <form onSubmit={formik.handleSubmit} className="max-w-md mx-auto">
-        { 
+        {ApiError && (
           <div
             className="flex items-center gap-4 my-7 p-3 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50"
             role="alert"
@@ -84,10 +87,9 @@ const NewPass = () => {
               <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
             </svg>
             <span className="sr-only">Error</span>
-            <div>
-            </div>
+            <div>{ApiError}</div>
           </div>
-         }
+        )}
 
         <div className="relative z-0 w-full mb-5 group">
           <input
@@ -135,7 +137,7 @@ const NewPass = () => {
               type="submit"
               className="text-white bg-emerald-600 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center:bg-emerald-600:hover:bg-emerald-600:focus:ring-emerald-800"
             >
-              Submit 
+              Submit
             </button>
           </div>
         </div>
@@ -191,12 +193,17 @@ const NewPass = () => {
             type="submit"
             className="text-white bg-emerald-600 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center:bg-emerald-600:hover:bg-emerald-600:focus:ring-emerald-800"
           >
-            {isLoading? <i className="fas fa-spinner fa-spin"></i> :"Submit"}
+            {isLoading ? <i className="fas fa-spinner fa-spin"></i> : "Submit"}
           </button>
-          <Link to={"/login"}>do you already have an account? <span className=" text-blue-500 underline font-semibold">login</span></Link>
+          <Link to={"/login"}>
+            do you already have an account?{" "}
+            <span className=" text-blue-500 underline font-semibold">
+              login
+            </span>
+          </Link>
         </div>
       </form>
     </>
   );
-}
+};
 export default NewPass;
